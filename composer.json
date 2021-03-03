@@ -1,0 +1,18 @@
+{
+    "name": "drupal/broken_reference",
+    "type": "drupal-module",
+    "description": "This module allows you to easily find broken entity references",
+    "homepage": "http://drupal.org/project/broken_reference",
+    "authors": [
+        {
+            "name": "Sami Hellsten",
+            "homepage": "https://www.drupal.org/u/Dropa",
+            "role": "Maintainer"
+        }
+    ],
+    "license": "GPL-2.0-or-later",
+    "minimum-stability": "dev",
+    "require": {
+        "drupal/core": "^8 || ^9"
+    }
+}

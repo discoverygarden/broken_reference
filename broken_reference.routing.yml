@@ -1,0 +1,9 @@
+broken_entity.form:
+  path: '/admin/config/development/broken_reference'
+  defaults:
+    _form: '\Drupal\broken_reference\Form\BrokenReferenceForm'
+    _title: 'Broken entity references'
+  options:
+    _admin_route: TRUE
+  requirements:
+    _permission: 'search broken entity references'
