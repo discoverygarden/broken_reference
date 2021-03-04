@@ -2,23 +2,50 @@
 
 namespace Drupal\broken_reference\Controller;
 
+use Drupal\Core\TempStore\PrivateTempStore;
+use Drupal\Core\TempStore\PrivateTempStoreFactory;
+
+/**
+ * Control stored broken references.
+ *
+ * @package Drupal\broken_reference\Controller
+ */
 class BrokenReferenceStoreController {
 
   /**
+   * The private temp store factory service.
+   *
    * @var \Drupal\Core\TempStore\PrivateTempStore
    */
-  protected $store;
+  protected PrivateTempStore $storeController;
 
-  public function __construct() {
-    /** @var \Drupal\Core\TempStore\PrivateTempStoreFactory $store */
-    $store = \Drupal::service('tempstore.private');
-    $this->store = $store->get('broken_reference');
+  /**
+   * BrokenReferenceStoreController constructor.
+   *
+   * @param \Drupal\Core\TempStore\PrivateTempStoreFactory $storeFactory
+   *   The private temp store factory service.
+   */
+  public function __construct(PrivateTempStoreFactory $storeFactory) {
+    $this->storeController = $storeFactory->get('broken_reference');
   }
 
+  /**
+   * Clear current state of broken references.
+   *
+   * @throws \Drupal\Core\TempStore\TempStoreException
+   */
   public function clearBroken() {
-    $this->store->delete('broken');
+    $this->storeController->delete('broken');
   }
 
+  /**
+   * Store more broken references.
+   *
+   * @param array $new
+   *   Broken references to add.
+   *
+   * @throws \Drupal\Core\TempStore\TempStoreException
+   */
   public function addBroken(array $new) {
     $broken = $this->getBroken();
     foreach ($new as $entityType => $bundles) {
@@ -30,12 +57,17 @@ class BrokenReferenceStoreController {
         }
       }
     }
-    $this->store->set('broken', $broken);
+    $this->storeController->set('broken', $broken);
   }
 
+  /**
+   * Get all broken references.
+   *
+   * @return array
+   *   Array of broken entity references.
+   */
   public function getBroken() {
-    return $this->store->get('broken') ?: [];
+    return $this->storeController->get('broken') ?: [];
   }
 
 }
-

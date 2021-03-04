@@ -2,12 +2,24 @@
 
 namespace Drupal\broken_reference\Batch;
 
-use Drupal\broken_reference\Controller\BrokenReferenceStoreController;
-use Drupal\broken_reference\Utility\BrokenReferenceFinder;
-
+/**
+ * Batch functions for gathering broken entity reference information.
+ *
+ * @package Drupal\broken_reference\Batch
+ */
 class BrokenReferenceBatch {
 
-  public static function batchFinished($success, $results, $operations) {
+  /**
+   * Finished callback for reference batches.
+   *
+   * @param bool $success
+   *   A boolean indicating whether the batch has completed successfully.
+   * @param array $results
+   *   The value set in $context['results'] by callback_batch_operation().
+   * @param array $operations
+   *   If $success is FALSE, contains the operations that remained unprocessed.
+   */
+  public static function batchFinished(bool $success, array $results, array $operations) {
     /** @var \Drupal\Core\Messenger\MessengerInterface $messenger */
     $messenger = \Drupal::service('messenger');
     if ($success) {
@@ -16,16 +28,30 @@ class BrokenReferenceBatch {
     else {
       $error_operation = reset($operations);
       $message = t('An error occurred while processing %error_operation with arguments: @arguments', [
-        '%error_operation' => $error_operation[0], '@arguments' => print_r($error_operation[1], TRUE)
+        '%error_operation' => $error_operation[0],
+        '@arguments' => print_r($error_operation[1], TRUE),
       ]);
       $messenger->addError($message);
     }
   }
 
-  public static function batchRun($entityType, $config, &$context) {
-    $finder = new BrokenReferenceFinder();
+  /**
+   * Batch API callback; Find broken entity references.
+   *
+   * @param string $entityType
+   *   Entity type to look up.
+   * @param array $config
+   *   Bundle, bundle key, fields and target entity field to look up.
+   * @param mixed $context
+   *   The batch current context.
+   *
+   * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
+   * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
+   */
+  public static function batchRun(string $entityType, array $config, &$context) {
     $entityTypeManager = \Drupal::entityTypeManager();
-    $storeController = new BrokenReferenceStoreController();
+    $finder = \Drupal::service('broken_reference.finder');
+    $storeController = \Drupal::service('broken_reference.store_controller');
 
     if (!isset($context['sandbox']['progress'])) {
       $results = $finder->getQueryResults($entityType, $config);

@@ -2,32 +2,64 @@
 
 namespace Drupal\broken_reference\Utility;
 
+use Drupal\Core\Entity\EntityFieldManagerInterface;
+use Drupal\Core\Entity\EntityTypeBundleInfoInterface;
+use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Entity\FieldableEntityInterface;
 
+/**
+ * Utility to find all broken entity references.
+ *
+ * @package Drupal\broken_reference\Utility
+ */
 class BrokenReferenceFinder {
 
   /**
+   * The entity type manager service.
+   *
    * @var \Drupal\Core\Entity\EntityTypeManagerInterface
    */
   protected $entityTypeManager;
 
   /**
+   * The entity field manager service.
+   *
    * @var \Drupal\Core\Entity\EntityFieldManagerInterface
    */
   protected $entityFieldManager;
 
   /**
+   * The entity bundle info service.
+   *
    * @var \Drupal\Core\Entity\EntityTypeBundleInfoInterface
    */
   protected $entityBundleInfo;
 
-  public function __construct() {
-    $this->entityTypeManager = \Drupal::entityTypeManager();
-    $this->entityFieldManager = \Drupal::service('entity_field.manager');
-    $this->entityBundleInfo = \Drupal::service('entity_type.bundle.info');
+  /**
+   * BrokenReferenceFinder constructor.
+   *
+   * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entityTypeManager
+   *   The entity type manager service.
+   * @param \Drupal\Core\Entity\EntityFieldManagerInterface $entityFieldManager
+   *   The entity field manager service.
+   * @param \Drupal\Core\Entity\EntityTypeBundleInfoInterface $entityBundleInfo
+   *   The entity bundle info service.
+   */
+  public function __construct(EntityTypeManagerInterface $entityTypeManager, EntityFieldManagerInterface $entityFieldManager, EntityTypeBundleInfoInterface $entityBundleInfo) {
+    $this->entityTypeManager = $entityTypeManager;
+    $this->entityFieldManager = $entityFieldManager;
+    $this->entityBundleInfo = $entityBundleInfo;
   }
 
-  public function getReferenceFields() {
+  /**
+   * Get all possible content fields where entity references are used.
+   *
+   * @return array
+   *   Array containing fields where references are used.
+   *
+   * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
+   */
+  public function getReferenceFields(): array {
     $build = [];
     foreach ($this->entityFieldManager->getFieldMapByFieldType('entity_reference') as $entityType => $references) {
       $entityDefinition = $this->entityTypeManager->getDefinition($entityType);
@@ -64,7 +96,23 @@ class BrokenReferenceFinder {
     return $build;
   }
 
-  public function getQueryResults($entityType, $config, $limit = FALSE) {
+  /**
+   * Get entities with broken references.
+   *
+   * @param string $entityType
+   *   Entity type to look up.
+   * @param array $config
+   *   Bundle, bundle key, fields and target entity field to look up.
+   * @param bool $limit
+   *   Use limit if just a quick lookup is wanted.
+   *
+   * @return int[]
+   *   Array of entity IDs.
+   *
+   * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
+   * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
+   */
+  public function getQueryResults(string $entityType, array $config, $limit = FALSE): array {
     $storage = $this->entityTypeManager->getStorage($entityType);
     $bundleKey = $config['bundle_key'];
     $results = [];
@@ -87,13 +135,21 @@ class BrokenReferenceFinder {
     return $results;
   }
 
-  public function brokenReferencesExists() {
+  /**
+   * Get rough estimate of possible different types of broken references.
+   *
+   * @return int
+   *   Rough estimate of broken reference types.
+   *
+   * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
+   * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
+   */
+  public function getBrokenRefenceTypes(): int {
+    $types = 0;
     foreach ($this->getReferenceFields() as $entityType => $config) {
-      if ($this->getQueryResults($entityType, $config, TRUE)) {
-        return TRUE;
-      }
+      $types += count($this->getQueryResults($entityType, $config, TRUE));
     }
-    return FALSE;
+    return $types;
   }
 
 }
