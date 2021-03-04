@@ -52,7 +52,7 @@ class BrokenReferenceStoreController {
       foreach ($bundles as $bundle => $fields) {
         foreach ($fields as $field => $brokenReferences) {
           foreach ($brokenReferences as $source => $target) {
-            $broken[$entityType][$bundle][$field][$source][] = $target;
+            $broken[$entityType][$bundle][$field][$source] = $target;
           }
         }
       }
