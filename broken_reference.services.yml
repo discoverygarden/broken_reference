@@ -1,0 +1,7 @@
+services:
+  broken_reference.store_controller:
+    class: Drupal\broken_reference\Controller\BrokenReferenceStoreController
+    arguments: [ '@tempstore.private' ]
+  broken_reference.finder:
+    class: Drupal\broken_reference\Utility\BrokenReferenceFinder
+    arguments: [ '@entity_type.manager', '@entity_field.manager', '@entity_type.bundle.info' ]

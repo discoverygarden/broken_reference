@@ -1,0 +1,5 @@
+broken_entity.form:
+  title: 'Broken entity references'
+  parent: system.admin_reports
+  description: 'View broken entity references.'
+  route_name: broken_entity.form
