@@ -21,7 +21,15 @@ class BrokenReferenceStoreController {
 
   public function addBroken(array $new) {
     $broken = $this->getBroken();
-    $broken += $new;
+    foreach ($new as $entityType => $bundles) {
+      foreach ($bundles as $bundle => $fields) {
+        foreach ($fields as $field => $brokenReferences) {
+          foreach ($brokenReferences as $source => $target) {
+            $broken[$entityType][$bundle][$field][$source][] = $target;
+          }
+        }
+      }
+    }
     $this->store->set('broken', $broken);
   }
 

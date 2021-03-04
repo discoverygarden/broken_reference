@@ -38,6 +38,11 @@ class BrokenReferenceFinder {
           continue;
         }
 
+        // Core bug?
+        if ($entityType == 'comment' && $field == 'entity_id') {
+          continue;
+        }
+
         $bundles = array_keys($fieldInfo['bundles']);
         foreach ($bundles as $bundle) {
           $fieldDefinition = $this->entityFieldManager->getFieldDefinitions($entityType, $bundle)[$field];
@@ -71,7 +76,7 @@ class BrokenReferenceFinder {
           $query->condition($bundleKey, $bundle);
         }
         $query
-          ->exists("{$field}.entity")
+          ->condition("{$field}", 0, '>')
           ->notExists("{$field}.entity.{$targetIdKey}");
         if ($limit) {
           $query->range(0, 1);

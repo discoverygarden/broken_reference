@@ -38,6 +38,10 @@ class BrokenReferenceForm extends FormBase {
     foreach ($this->store->getBroken() as $entityType => $bundles) {
       foreach ($bundles as $bundle => $fields) {
         foreach ($fields as $field => $brokenReferences) {
+          $targetCount = 0;
+          foreach ($brokenReferences as $source => $target) {
+            $targetCount += count($target);
+          }
           $count = count($brokenReferences);
           $totalBroken += $count;
           $rows[] = [
@@ -45,7 +49,8 @@ class BrokenReferenceForm extends FormBase {
               'entity_type' => $entityType,
               'bundle' => $bundle,
               'field' => $field,
-              'amount' => $count,
+              'source_amonut' => $count,
+              'target_amount' => $targetCount,
             ]
           ];
         }
@@ -65,9 +70,10 @@ class BrokenReferenceForm extends FormBase {
         $this->t('Entity type'),
         $this->t('Bundle'),
         $this->t('Field'),
-        $this->t('Amount'),
+        $this->t('Source amount'),
+        $this->t('Target amount'),
       ],
-      '#prefix' => $this->t('Total amount of broken references: @amount', [
+      '#prefix' => $this->t('Total amount of broken target references: @amount', [
         '@amount' => $totalBroken,
       ]),
       '#sticky' => TRUE,
