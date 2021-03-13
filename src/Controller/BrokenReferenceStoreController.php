@@ -2,7 +2,6 @@
 
 namespace Drupal\broken_reference\Controller;
 
-use Drupal\Core\TempStore\PrivateTempStore;
 use Drupal\Core\TempStore\PrivateTempStoreFactory;
 
 /**
