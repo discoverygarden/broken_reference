@@ -20,14 +20,14 @@ class BrokenReferenceForm extends FormBase {
    *
    * @var \Drupal\broken_reference\Controller\BrokenReferenceStoreController
    */
-  protected BrokenReferenceStoreController $storeController;
+  protected $storeController;
 
   /**
    * Broken reference finder service.
    *
    * @var \Drupal\broken_reference\Utility\BrokenReferenceFinder
    */
-  protected BrokenReferenceFinder $finder;
+  protected $finder;
 
   /**
    * Number of total broken references.
