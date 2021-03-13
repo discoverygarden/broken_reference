@@ -64,6 +64,7 @@ class BrokenReferenceFinder {
     foreach ($this->entityFieldManager->getFieldMapByFieldType('entity_reference') as $entityType => $references) {
       $entityDefinition = $this->entityTypeManager->getDefinition($entityType);
       $bundleKey = $entityDefinition->getKey('bundle');
+      $validReferences = FALSE;
       $build[$entityType]['bundle_key'] = $bundleKey;
       foreach ($references as $field => $fieldInfo) {
         if ($field == $bundleKey) {
@@ -90,7 +91,12 @@ class BrokenReferenceFinder {
           $targetIdKey = $targetEntityTypeDefinition->getKey('uuid');
 
           $build[$entityType]['bundles'][$bundle][$field] = $targetIdKey;
+          $validReferences = TRUE;
         }
+      }
+
+      if (!$validReferences) {
+        unset($build[$entityType]);
       }
     }
     return $build;
