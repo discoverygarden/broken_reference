@@ -65,7 +65,7 @@ class BrokenReferenceForm extends FormBase {
    */
   public function buildForm(array $form, FormStateInterface $form_state) {
     $rows = $this->getRows();
-    $brokenTypes = $this->finder->getBrokenRefenceTypes();
+    $brokenTypes = $this->finder->getBrokenReferenceTypes();
     if ($rows) {
       $form['table'] = [
         '#type' => 'table',

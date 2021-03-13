@@ -150,7 +150,7 @@ class BrokenReferenceFinder {
    * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
    * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
    */
-  public function getBrokenRefenceTypes(): int {
+  public function getBrokenReferenceTypes(): int {
     $types = 0;
     foreach ($this->getReferenceFields() as $entityType => $config) {
       $types += count($this->getQueryResults($entityType, $config, TRUE));
