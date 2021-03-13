@@ -17,7 +17,7 @@ class BrokenReferenceStoreController {
    *
    * @var \Drupal\Core\TempStore\PrivateTempStore
    */
-  protected PrivateTempStore $storeController;
+  protected $storeController;
 
   /**
    * BrokenReferenceStoreController constructor.

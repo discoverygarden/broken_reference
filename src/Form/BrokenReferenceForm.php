@@ -34,14 +34,14 @@ class BrokenReferenceForm extends FormBase {
    *
    * @var int
    */
-  private int $totalBroken = 0;
+  private $totalBroken = 0;
 
   /**
    * Number of total different types entity references are broken.
    *
    * @var int
    */
-  private int $totalBrokenTypes = 0;
+  private $totalBrokenTypes = 0;
 
   /**
    * {@inheritdoc}
