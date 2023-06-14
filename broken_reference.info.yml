@@ -2,5 +2,5 @@ name: 'Broken reference'
 type: module
 description: 'Allows you to easily detect broken entity references'
 package: 'Broken reference'
-core_version_requirement: ^8|| ^9
+core_version_requirement: ^8|| ^9 || ^10
 
