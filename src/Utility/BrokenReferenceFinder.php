@@ -36,6 +36,13 @@ class BrokenReferenceFinder {
   protected $entityBundleInfo;
 
   /**
+   * The field types to go through.
+   *
+   * @var array
+   */
+  protected const FIELD_TYPES = ['entity_reference', 'entity_reference_revisions'];
+
+  /**
    * BrokenReferenceFinder constructor.
    *
    * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entityTypeManager
@@ -60,8 +67,39 @@ class BrokenReferenceFinder {
    * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
    */
   public function getReferenceFields(): array {
+    $field_list = [];
+    foreach (self::FIELD_TYPES as $field_type) {
+      foreach ($this->getReferenceFieldsWithType($field_type) as $entity_type => $field_data) {
+        if (!isset($field_list[$entity_type])) {
+          $field_list[$entity_type] = $field_data;
+          continue;
+        }
+        foreach ($field_data['bundles'] as $bundle => $fields) {
+          if (!isset($field_list[$entity_type]['bundles'][$bundle])) {
+            $field_list[$entity_type]['bundles'][$bundle] = $fields;
+            continue;
+          }
+          $field_list[$entity_type]['bundles'][$bundle] = array_merge($field_list[$entity_type]['bundles'][$bundle], $fields);
+        }
+      }
+    }
+    return $field_list;
+  }
+
+  /**
+   * Get all possible content fields where entity references are used.
+   *
+   * @param string $fieldType
+   *   The field type to get.
+   *
+   * @return array
+   *   Array containing fields where references are used.
+   *
+   * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
+   */
+  public function getReferenceFieldsWithType($fieldType): array {
     $build = [];
-    foreach ($this->entityFieldManager->getFieldMapByFieldType('entity_reference') as $entityType => $references) {
+    foreach ($this->entityFieldManager->getFieldMapByFieldType($fieldType) as $entityType => $references) {
       $entityDefinition = $this->entityTypeManager->getDefinition($entityType);
       $bundleKey = $entityDefinition->getKey('bundle');
       $validReferences = FALSE;
@@ -73,6 +111,10 @@ class BrokenReferenceFinder {
 
         // Core bug?
         if ($entityType == 'comment' && $field == 'entity_id') {
+          continue;
+        }
+        // FIXME: Not a separate table, seems to fail?
+        if ($entityType == 'paragraphs_library_item' && $field == 'paragraphs') {
           continue;
         }
 
