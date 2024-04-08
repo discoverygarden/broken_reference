@@ -6,6 +6,7 @@ use Drupal\Core\Entity\EntityFieldManagerInterface;
 use Drupal\Core\Entity\EntityTypeBundleInfoInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Entity\FieldableEntityInterface;
+use Drupal\Core\Field\BaseFieldDefinition;
 
 /**
  * Utility to find all broken entity references.
@@ -122,6 +123,11 @@ class BrokenReferenceFinder {
         foreach ($bundles as $bundle) {
           $fieldDefinition = $this->entityFieldManager->getFieldDefinitions($entityType, $bundle)[$field];
           if ($fieldDefinition->isComputed()) {
+            continue;
+          }
+          // Workaround for https://www.drupal.org/project/entity_reference_revisions/issues/3439339
+          // @todo Remove when fixed.
+          if ($fieldType == 'entity_reference_revisions' && $fieldDefinition instanceof BaseFieldDefinition) {
             continue;
           }
           // Because of course getTargetEntityTypeId() returns wrong.
