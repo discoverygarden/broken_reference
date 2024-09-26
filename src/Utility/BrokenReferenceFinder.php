@@ -41,7 +41,7 @@ class BrokenReferenceFinder {
    *
    * @var array
    */
-  protected const FIELD_TYPES = ['entity_reference', 'entity_reference_revisions'];
+  protected const FIELD_TYPES = ['entity_reference', 'entity_reference_revisions', 'typed_relation'];
 
   /**
    * BrokenReferenceFinder constructor.
