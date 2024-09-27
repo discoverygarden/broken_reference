@@ -27,26 +27,16 @@ class BrokenReferenceCommands extends DrushCommands {
   protected BrokenReferenceStoreController $controller;
 
   /**
-   * The database connection.
-   *
-   * @var \Drupal\Core\Database\Connection
-   */
-  protected Connection $database;
-
-  /**
    * Constructs a new BrokenReferenceCommands object.
    *
    * @param \Drupal\broken_reference\Utility\BrokenReferenceFinder $finder
    *   The broken reference finder.
    * @param \Drupal\broken_reference\Controller\BrokenReferenceStoreController $controller
    *   The broken reference store controller.
-   * @param \Drupal\Core\Database\Connection $database
-   *   The database connection.
    */
-  public function __construct(BrokenReferenceFinder $finder, BrokenReferenceStoreController $controller, Connection $database) {
+  public function __construct(BrokenReferenceFinder $finder, BrokenReferenceStoreController $controller) {
     $this->finder = $finder;
     $this->controller = $controller;
-    $this->database = $database;
   }
 
   /**
@@ -56,7 +46,6 @@ class BrokenReferenceCommands extends DrushCommands {
     return new static(
       $container->get('broken_reference.finder'),
       $container->get('broken_reference.store_controller'),
-      $container->get('database')
     );
   }
 
