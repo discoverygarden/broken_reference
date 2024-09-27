@@ -118,6 +118,9 @@ class BrokenReferenceFinder {
         if ($entityType == 'paragraphs_library_item' && $field == 'paragraphs') {
           continue;
         }
+        if ($entityType === 'group_config_wrapper') {
+          continue;
+        }
 
         $bundles = array_keys($fieldInfo['bundles']);
         foreach ($bundles as $bundle) {
